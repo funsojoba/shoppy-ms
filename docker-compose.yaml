@@ -1,0 +1,69 @@
+version: '3'
+services:
+  authentication:
+    build:
+      context: ./authentication
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./authentication:/app
+    depends_on:
+      - authentication_db
+
+  authentication_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+
+  catalog:
+    build:
+      context: ./catalogue
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./catalogue:/app
+    depends_on:
+      - catalog_db
+
+  catalog_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: catalog_db
+      POSTGRES_USER: catalog_user
+      POSTGRES_PASSWORD: catalog_password
+
+  cart:
+    build:
+      context: ./cart
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./cart:/app
+    depends_on:
+      - cart_db
+
+  cart_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: cart_db
+      POSTGRES_USER: cart_user
+      POSTGRES_PASSWORD: cart_password
+
+  notification:
+    build:
+      context: ./notification
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./notification:/app
+    depends_on:
+      - kafka
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
